@@ -1,0 +1,27 @@
+﻿@model IEnumerable<ListAllCategoriesServiceModel>
+
+@{
+    ViewData["Title"] = "All Categories";
+}
+
+<h2>@ViewData["Title"]</h2>
+<div class="form-inline">
+    <a asp-action="Create" class="btn btn-group-lg btn-success">Create Category</a>
+    <a asp-action="Delete" class="btn btn-group-lg btn-danger">Delete Category</a>
+</div>
+<br />
+<table class="table table-bordered table-hover">
+    <tr>
+        <th>Name</th>
+    </tr>
+    @foreach (var category in Model)
+    {
+        <tr>
+            <td><a asp-area="" asp-controller="Ads" asp-action="ByCategory" asp-route-id="@category.Id">@category.Name</a></td>
+            <td><a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-warning btn-group-lg">Edit</a></td>
+        </tr>
+    }
+</table>
+
+
+
