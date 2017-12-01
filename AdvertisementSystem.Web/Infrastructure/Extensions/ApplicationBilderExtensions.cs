@@ -46,6 +46,7 @@
                             {
                                 Email = adminEmail,
                                 UserName = adminEmail,
+                                IsDeleted = false,
                                 Name = AdministratorRole,
                                 PhoneNumber = "+0888888888"
                             };
@@ -62,3 +63,4 @@
         }
     }
 }
+
