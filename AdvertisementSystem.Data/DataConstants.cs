@@ -21,5 +21,7 @@
 
         public const int CategoryNameMinLenght = 4;
         public const int CategoryNameMaxLenght = 30;
+
+        public const int PageSize = 15;
     }
 }

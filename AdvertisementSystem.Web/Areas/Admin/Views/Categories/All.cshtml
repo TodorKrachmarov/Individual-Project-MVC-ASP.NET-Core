@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ListAllCategoriesServiceModel>
+﻿@model AdminCategoryViewModel
 
 @{
     ViewData["Title"] = "All Categories";
@@ -10,11 +10,28 @@
     <a asp-action="Delete" class="btn btn-group-lg btn-danger">Delete Category</a>
 </div>
 <br />
+@if (Model.TotalPages > 1)
+{
+    <ul class="pagination">
+        @if (Model.PreviosPage < Model.CurrentPage)
+        {
+            <li class="page-item">
+                <a asp-route-page="@Model.PreviosPage">Previous</a>
+            </li>
+        }
+        @if (Model.NextPage > Model.CurrentPage)
+        {
+            <li class="page-item @(Model.NextPage == Model.CurrentPage ? "disabled" : string.Empty)">
+                <a asp-route-page="@Model.NextPage">Next</a>
+            </li>
+        }
+    </ul>
+}
 <table class="table table-bordered table-hover">
     <tr>
         <th>Name</th>
     </tr>
-    @foreach (var category in Model)
+    @foreach (var category in Model.Categories)
     {
         <tr>
             <td><a asp-area="" asp-controller="Ads" asp-action="ByCategory" asp-route-id="@category.Id">@category.Name</a></td>
@@ -22,6 +39,23 @@
         </tr>
     }
 </table>
+@if (Model.TotalPages > 1)
+{
+    <ul class="pagination">
+        @if (Model.PreviosPage < Model.CurrentPage)
+        {
+            <li class="page-item">
+                <a asp-route-page="@Model.PreviosPage">Previous</a>
+            </li>
+        }
+        @if (Model.NextPage > Model.CurrentPage)
+        {
+            <li class="page-item @(Model.NextPage == Model.CurrentPage ? "disabled" : string.Empty)">
+                <a asp-route-page="@Model.NextPage">Next</a>
+            </li>
+        }
+    </ul>
+}
 
 
 

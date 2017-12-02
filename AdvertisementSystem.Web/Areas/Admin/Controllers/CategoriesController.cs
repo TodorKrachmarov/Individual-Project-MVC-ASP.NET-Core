@@ -17,11 +17,16 @@
             this.admin = admin;
         }
 
-        public IActionResult All()
+        public IActionResult All(int page = 1)
         {
-            var categories = this.admin.AllCategories();
+            var model = new AdminCategoryViewModel
+            {
+                Categories = this.admin.GetCategories(page),
+                CurrentPage = page,
+                TotalPages = this.admin.AllCategoriesCount()
+            };
 
-            return this.View(categories);
+            return this.View(model);
         }
 
         public IActionResult Create() => this.View();

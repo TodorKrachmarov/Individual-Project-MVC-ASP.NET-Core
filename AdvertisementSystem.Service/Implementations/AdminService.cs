@@ -1,6 +1,6 @@
 ﻿namespace AdvertisementSystem.Services.Implementations
 {
-    using AdvertisementSystem.Data.Models;
+    using Data.Models;
     using AutoMapper.QueryableExtensions;
     using Contracts;
     using Data;
@@ -8,6 +8,9 @@
     using System.Collections.Generic;
     using System.Linq;
     using AdvertisementSystem.Services.Models.Admin.Users;
+
+    using static Data.DataConstants;
+    using System;
 
     public class AdminService : IAdminService
     {
@@ -17,6 +20,15 @@
         {
             this.db = db;
         }
+
+        public IEnumerable<ListAllCategoriesServiceModel> GetCategories(int page)
+            => this.db
+                    .Categories
+                    .OrderBy(c => c.Id)
+                    .Skip((page - 1) * PageSize)
+                    .Take(PageSize)
+                    .ProjectTo<ListAllCategoriesServiceModel>()
+                    .ToList();
 
         public IEnumerable<ListAllCategoriesServiceModel> AllCategories()
             => this.db
@@ -78,14 +90,6 @@
                 return false;
             }
 
-            if (category.Name != name)
-            {
-                if (this.db.Categories.Any(c => c.Name == name))
-                {
-                    return false;
-                }
-            }
-
             category.Name = name;
             category.ImageUrl = imageUrl;
 
@@ -123,11 +127,37 @@
         public string CategoryName(int id)
             => this.db.Categories.FirstOrDefault(c => c.Id == id).Name;
 
-        public IEnumerable<UsersListingServiceModel> GetAllUsers()
+        public IEnumerable<UsersListingServiceModel> GetUsers(int page)
             => this.db
                 .Users
-            .OrderBy(c => c.Name)
-            .ProjectTo<UsersListingServiceModel>()
-            .ToList();
+                .OrderBy(c => c.Name)
+                .Skip((page - 1) * PageSize)
+                .Take(PageSize)
+                .ProjectTo<UsersListingServiceModel>()
+                .ToList();
+
+        public void DeactivateUser(string id)
+        {
+            var user = this.db.Users.FirstOrDefault(u => u.Id == id);
+
+            user.IsDeleted = true;
+
+            this.db.SaveChanges();
+        }
+
+        public void ActivateUser(string id)
+        {
+            var user = this.db.Users.FirstOrDefault(u => u.Id == id);
+
+            user.IsDeleted = false;
+
+            this.db.SaveChanges();
+        }
+
+        public int AllCategoriesCount()
+            => (int)Math.Ceiling(this.db.Categories.Count() / (double)PageSize);
+
+        public int AllUsersCount()
+            => (int)Math.Ceiling(this.db.Users.Count() / (double)PageSize);
     }
 }

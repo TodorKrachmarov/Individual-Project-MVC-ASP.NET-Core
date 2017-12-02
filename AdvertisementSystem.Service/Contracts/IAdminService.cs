@@ -6,6 +6,8 @@
 
     public interface IAdminService
     {
+        IEnumerable<ListAllCategoriesServiceModel> GetCategories(int page);
+
         IEnumerable<ListAllCategoriesServiceModel> AllCategories();
 
         bool CreateCategory(string name, string imageUrl);
@@ -20,6 +22,14 @@
 
         string CategoryName(int id);
 
-        IEnumerable<UsersListingServiceModel> GetAllUsers();
+        IEnumerable<UsersListingServiceModel> GetUsers(int page);
+
+        void DeactivateUser(string id);
+
+        void ActivateUser(string id);
+
+        int AllCategoriesCount();
+
+        int AllUsersCount();
     }
 }

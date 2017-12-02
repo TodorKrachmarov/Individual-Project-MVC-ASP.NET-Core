@@ -1,4 +1,4 @@
-﻿@model IEnumerable<UsersListingServiceModel>
+﻿@model AdminUsersViewModel
 
 @{
     ViewData["Title"] = "All Users";
@@ -6,21 +6,63 @@
 
 <h2>@ViewData["Title"]</h2>
 <hr />
-
+@if (Model.TotalPages > 1)
+{
+    <ul class="pagination">
+        @if (Model.PreviosPage < Model.CurrentPage)
+        {
+            <li class="page-item">
+                <a asp-route-page="@Model.PreviosPage">Previous</a>
+            </li>
+        }
+        @if (Model.NextPage > Model.CurrentPage)
+        {
+            <li class="page-item @(Model.NextPage == Model.CurrentPage ? "disabled" : string.Empty)">
+                <a asp-route-page="@Model.NextPage">Next</a>
+            </li>
+        }
+    </ul>
+}
 <table class="table table-bordered table-hover">
     <tr>
         <th>Name</th>
+        <th>Email</th>
     </tr>
-    @foreach (var user in Model)
+    @foreach (var user in Model.Users)
     {
         <tr>
             <td><a asp-area="" asp-controller="Users" asp-action="Profile" asp-route-id="@user.Id">@user.Name</a></td>
+            <td>@user.Email</td>
             <td>
-                <a asp-action="ResetPassword" asp-route-id="@user.Id" class="btn btn-danger btn-group-sm">Reset Password</a>
-                <a asp-action="MakeAdmin" asp-route-id="@user.Id" class="btn btn-primary btn-group-sm">Make Admin</a>
+                @if (user.IsDeleted)
+                {
+                    <a asp-action="Activate" asp-route-id="@user.Id" class="btn btn-primary btn-group-sm">Activate</a>
+                }
+                else
+                {
+                    <a asp-action="Deactivate" asp-route-id="@user.Id" class="btn btn-danger btn-group-sm">Deactivate</a>
+                }
+                <a asp-action="ResetPassword" asp-route-id="@user.Id" class="btn btn-warning btn-group-sm">Reset Password</a>
+                <a asp-action="MakeAdmin" asp-route-id="@user.Id" class="btn btn-success btn-group-sm">Make Admin</a>
             </td>
         </tr>
     }
 </table>
-
+@if (Model.TotalPages > 1)
+{
+    <ul class="pagination">
+        @if (Model.PreviosPage < Model.CurrentPage)
+        {
+            <li class="page-item">
+                <a asp-route-page="@Model.PreviosPage">Previous</a>
+            </li>
+        }
+        @if (Model.NextPage > Model.CurrentPage)
+        {
+            <li class="page-item @(Model.NextPage == Model.CurrentPage ? "disabled" : string.Empty)">
+                <a asp-route-page="@Model.NextPage">Next</a>
+            </li>
+        }
+    </ul>
+}
 

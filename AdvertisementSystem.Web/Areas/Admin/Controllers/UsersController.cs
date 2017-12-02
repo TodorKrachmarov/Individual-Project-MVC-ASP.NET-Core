@@ -25,11 +25,16 @@
             this.roleManager = roleManager;
         }
 
-        public IActionResult All()
+        public IActionResult All(int page = 1)
         {
-            var users = this.admin.GetAllUsers();
+            var model = new AdminUsersViewModel
+            {
+                Users = this.admin.GetUsers(page),
+                CurrentPage = page,
+                TotalPages = this.admin.AllUsersCount()
+            };
 
-            return this.View(users);
+            return this.View(model);
         }
 
         public async Task<IActionResult> ResetPassword(string id)
@@ -104,6 +109,40 @@
             {
                 this.AddErrorMessage($"The role does not exist!");
             }
+
+            return this.RedirectToAllUsers();
+        }
+
+        public async Task<IActionResult> Deactivate(string id)
+        {
+            var user = await this.userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                this.AddErrorMessage("The user you are trying to deactivate does not exist!");
+                return this.RedirectToAllUsers();
+            }
+
+            this.admin.DeactivateUser(id);
+            
+            this.AddSuccessMessage($"You deactivated user {user.Name}!");
+
+            return this.RedirectToAllUsers();
+        }
+
+        public async Task<IActionResult> Activate(string id)
+        {
+            var user = await this.userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                this.AddErrorMessage("The user you are trying to activate does not exist!");
+                return this.RedirectToAllUsers();
+            }
+
+            this.admin.ActivateUser(id);
+
+            this.AddSuccessMessage($"You activated user {user.Name}!");
 
             return this.RedirectToAllUsers();
         }
