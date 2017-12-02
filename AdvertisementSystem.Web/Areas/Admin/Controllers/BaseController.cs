@@ -6,7 +6,7 @@
     using static WebConstants;
 
     [Area("Admin")]
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = AdministratorRole)]
     public class BaseController : Controller
     {
         public void AddSuccessMessage(string message)

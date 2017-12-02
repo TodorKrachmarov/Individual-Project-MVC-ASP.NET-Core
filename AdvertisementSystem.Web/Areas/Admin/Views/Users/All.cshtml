@@ -17,7 +17,7 @@
         }
         @if (Model.NextPage > Model.CurrentPage)
         {
-            <li class="page-item @(Model.NextPage == Model.CurrentPage ? "disabled" : string.Empty)">
+            <li class="page-item">
                 <a asp-route-page="@Model.NextPage">Next</a>
             </li>
         }
@@ -59,7 +59,7 @@
         }
         @if (Model.NextPage > Model.CurrentPage)
         {
-            <li class="page-item @(Model.NextPage == Model.CurrentPage ? "disabled" : string.Empty)">
+            <li class="page-item">
                 <a asp-route-page="@Model.NextPage">Next</a>
             </li>
         }
