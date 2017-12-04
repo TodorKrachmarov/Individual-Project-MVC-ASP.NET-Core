@@ -1,24 +1,36 @@
 ﻿namespace AdvertisementSystem.Web.Areas.Admin.Controllers
 {
+    using Data.Models;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Models.Category;
     using Services.Contracts;
     using Services.Models.Admin.Category;
-    using System.Linq;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public class CategoriesController : BaseController
     {
         private readonly IAdminService admin;
+        private readonly UserManager<User> userManager;
 
-        public CategoriesController(IAdminService admin)
+        public CategoriesController(IAdminService admin, UserManager<User> userManager)
         {
             this.admin = admin;
+            this.userManager = userManager;
         }
 
-        public IActionResult All(int page = 1)
+        public async Task<IActionResult> All(int page = 1)
         {
+            var user = await this.userManager.GetUserAsync(this.User);
+
+            if (user.IsDeleted)
+            {
+                return BadRequest();
+            }
+
             var model = new AdminCategoryViewModel
             {
                 Categories = this.admin.GetCategories(page),
@@ -29,11 +41,28 @@
             return this.View(model);
         }
 
-        public IActionResult Create() => this.View();
+        public async Task<IActionResult> Create()
+        {
+            var user = await this.userManager.GetUserAsync(this.User);
+
+            if (user.IsDeleted)
+            {
+                return BadRequest();
+            }
+
+            return this.View();
+        }
 
         [HttpPost]
-        public IActionResult Create(AddEditCategoryServiceModel model)
+        public async Task<IActionResult> Create(AddEditCategoryServiceModel model)
         {
+            var user = await this.userManager.GetUserAsync(this.User);
+
+            if (user.IsDeleted)
+            {
+                return BadRequest();
+            }
+
             if (!ModelState.IsValid)
             {
                 return this.View(model);
@@ -52,8 +81,15 @@
             return this.RedirectToAllCategories();
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
+            var user = await this.userManager.GetUserAsync(this.User);
+
+            if (user.IsDeleted)
+            {
+                return BadRequest();
+            }
+
             var category = this.admin.CategoryToEdit(id);
 
             if (category == null)
@@ -66,8 +102,15 @@
         }
 
         [HttpPost]
-        public IActionResult Edit(int id, AddEditCategoryServiceModel model)
+        public async Task<IActionResult> Edit(int id, AddEditCategoryServiceModel model)
         {
+            var user = await this.userManager.GetUserAsync(this.User);
+
+            if (user.IsDeleted)
+            {
+                return BadRequest();
+            }
+
             if (!ModelState.IsValid)
             {
                 return this.View(model);
@@ -94,8 +137,15 @@
             return this.RedirectToAllCategories();
         }
 
-        public IActionResult Delete()
+        public async Task<IActionResult> Delete()
         {
+            var user = await this.userManager.GetUserAsync(this.User);
+
+            if (user.IsDeleted)
+            {
+                return BadRequest();
+            }
+
             var model = new DeleteCategoryViewModel
             {
                 Categories = this.CategoriesToList()
@@ -105,8 +155,15 @@
         }
 
         [HttpPost]
-        public IActionResult Delete(DeleteCategoryViewModel model)
+        public async Task<IActionResult> Delete(DeleteCategoryViewModel model)
         {
+            var user = await this.userManager.GetUserAsync(this.User);
+
+            if (user.IsDeleted)
+            {
+                return BadRequest();
+            }
+
             if (model.CategoryToDelete == model.CategoryToTransfer)
             {
                 this.ModelState.AddModelError("", "Category to delete must be different from category to transfer!");

@@ -53,25 +53,22 @@
             => this.db.Ads.Any(a => a.Id == adId && a.AuthorId == authorId);
 
         public EditAdServiceModel FindToEdit(int id)
-        {
-            var ad = this.db.Ads
-                        .Include(a => a.Tags)
-                        .ThenInclude(t => t.Tag)
+            => this.db.Ads
                         .Where(a => a.Id == id)
+                        .ProjectTo<EditAdServiceModel>()
                         .FirstOrDefault();
-            return null;
-        }
 
         public void Edit(int id,string title, string description, string imageUrl, int CategoryId, string keyWords)
         {
-            var ad = this.db.Ads.FirstOrDefault(a => a.Id == id);
-
+            var ad = this.db.Ads.Where(a => a.Id == id).Include(a => a.Tags).ThenInclude(a => a.Tag).FirstOrDefault();
 
             ad.Title = title;
             ad.Description = description;
             ad.ImageUrl = imageUrl;
             ad.CategoryId = CategoryId;
             ad.Tags.Clear();
+
+            this.db.SaveChanges();
 
             var tags = keyWords.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
@@ -89,6 +86,18 @@
             }
             
             this.db.SaveChanges();
+        }
+
+        public string Delete(int id)
+        {
+            var ad = this.db.Ads.FirstOrDefault(a => a.Id == id);
+
+            var name = ad.Title;
+
+            this.db.Remove(ad);
+            this.db.SaveChanges();
+
+            return name;
         }
     }
 }

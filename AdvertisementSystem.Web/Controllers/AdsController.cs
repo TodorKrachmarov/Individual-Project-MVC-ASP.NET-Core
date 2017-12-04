@@ -1,14 +1,18 @@
 ﻿namespace AdvertisementSystem.Web.Controllers
 {
-    using Services.Contracts;
-    using Models.Ads;
-    using Microsoft.AspNetCore.Mvc;
-    using System.Linq;
-    using Microsoft.AspNetCore.Mvc.Rendering;
-    using Microsoft.AspNetCore.Identity;
     using Data.Models;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Rendering;
+    using Models.Ads;
+    using Services.Contracts;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using static WebConstants;
 
+    [Authorize]
     public class AdsController : BaseController
     {
         private readonly IAdService adService;
@@ -22,8 +26,15 @@
             this.userManager = userManager;
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var user = await this.userManager.GetUserAsync(this.User);
+
+            if (user.IsDeleted)
+            {
+                return BadRequest();
+            }
+
             var model = new AddEditAdViewModel
             {
                 Categories = this.Categories()
@@ -33,10 +44,24 @@
         }
 
         [HttpPost]
-        public IActionResult Create(AddEditAdViewModel model)
+        public async Task<IActionResult> Create(AddEditAdViewModel model)
         {
-            if (!ModelState.IsValid)
+            var user = await this.userManager.GetUserAsync(this.User);
+
+            if (user.IsDeleted)
             {
+                return BadRequest();
+            }
+
+            var categoryExist = this.categoryService.Exist(model.Category);
+
+            if (!ModelState.IsValid || !categoryExist)
+            {
+                if (!categoryExist)
+                {
+                    ModelState.AddModelError(nameof(model.Category), "The category does not exist!");
+                }
+
                 model.Categories = this.Categories();
 
                 return View(model);
@@ -49,12 +74,19 @@
             return this.RedirectToHome();
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
+            var user = await this.userManager.GetUserAsync(this.User);
+
+            if (user.IsDeleted)
+            {
+                return BadRequest();
+            }
+
             string authorId = this.userManager.GetUserId(this.User);
             var exist = this.adService.Exists(id, authorId);
 
-            if (!exist)
+            if (!exist || !this.User.IsInRole(AdministratorRole))
             {
                 this.AddErrorMessage("The ad you want to edit does not exist!");
                 return this.RedirectToHome();
@@ -76,19 +108,33 @@
         }
 
         [HttpPost]
-        public IActionResult Edit(int id, AddEditAdViewModel model)
+        public async Task<IActionResult> Edit(int id, AddEditAdViewModel model)
         {
+            var user = await this.userManager.GetUserAsync(this.User);
+
+            if (user.IsDeleted)
+            {
+                return BadRequest();
+            }
+
             string authorId = this.userManager.GetUserId(this.User);
             var exist = this.adService.Exists(id, authorId);
 
-            if (!exist)
+            if (!exist || !this.User.IsInRole(AdministratorRole))
             {
                 this.AddErrorMessage("The ad you want to edit does not exist!");
                 return this.RedirectToHome();
             }
 
-            if (!ModelState.IsValid)
+            var categoryExist = this.categoryService.Exist(model.Category);
+
+            if (!ModelState.IsValid || !categoryExist)
             {
+                if (!categoryExist)
+                {
+                    ModelState.AddModelError(nameof(model.Category), "The category does not exist!");
+                }
+
                 model.Categories = this.Categories();
 
                 return View(model);
@@ -100,6 +146,51 @@
             return this.RedirectToHome();
         }
 
+        public async Task<IActionResult> Delete(int id)
+        {
+            var user = await this.userManager.GetUserAsync(this.User);
+
+            if (user.IsDeleted)
+            {
+                return BadRequest();
+            }
+
+            string authorId = this.userManager.GetUserId(this.User);
+            var exist = this.adService.Exists(id, authorId);
+
+            if (!exist || !this.User.IsInRole(AdministratorRole))
+            {
+                this.AddErrorMessage("The ad you want to edit does not exist!");
+                return this.RedirectToHome();
+            }
+
+            return this.View(id);
+        }
+
+        public async Task<IActionResult> Destroy(int id)
+        {
+            var user = await this.userManager.GetUserAsync(this.User);
+
+            if (user.IsDeleted)
+            {
+                return BadRequest();
+            }
+
+            string authorId = this.userManager.GetUserId(this.User);
+            var exist = this.adService.Exists(id, authorId);
+
+            if (!exist || !this.User.IsInRole(AdministratorRole))
+            {
+                this.AddErrorMessage("The ad you want to edit does not exist!");
+                return this.RedirectToHome();
+            }
+
+            var name = this.adService.Delete(id);
+
+            this.AddSuccessMessage($"You deleted {name} ad!");
+            return this.RedirectToHome();
+        }
+        
         private IEnumerable<SelectListItem> Categories()
             => this.categoryService
                                   .All()

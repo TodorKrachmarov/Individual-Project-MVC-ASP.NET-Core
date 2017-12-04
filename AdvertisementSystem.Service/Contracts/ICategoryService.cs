@@ -6,5 +6,7 @@
     public interface ICategoryService
     {
         IEnumerable<AllCategoriesServiceModel> All();
+
+        bool Exist(int id);
     }
 }

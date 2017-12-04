@@ -25,8 +25,15 @@
             this.roleManager = roleManager;
         }
 
-        public IActionResult All(int page = 1)
+        public async Task<IActionResult> All(int page = 1)
         {
+            var logedInUser = await this.userManager.GetUserAsync(this.User);
+
+            if (logedInUser.IsDeleted)
+            {
+                return BadRequest();
+            }
+
             var model = new AdminUsersViewModel
             {
                 Users = this.admin.GetUsers(page),
@@ -39,6 +46,13 @@
 
         public async Task<IActionResult> ResetPassword(string id)
         {
+            var logedInUser = await this.userManager.GetUserAsync(this.User);
+
+            if (logedInUser.IsDeleted)
+            {
+                return BadRequest();
+            }
+
             var user = await this.userManager.FindByIdAsync(id);
 
             if (user == null)
@@ -53,6 +67,13 @@
         [HttpPost]
         public async Task<IActionResult> ResetPassword(string id, ChangeUserPasswordViewModel model)
         {
+            var logedInUser = await this.userManager.GetUserAsync(this.User);
+
+            if (logedInUser.IsDeleted)
+            {
+                return BadRequest();
+            }
+
             var user = await this.userManager.FindByIdAsync(id);
 
             if (user == null)
@@ -81,6 +102,13 @@
 
         public async Task<IActionResult> MakeAdmin(string id)
         {
+            var logedInUser = await this.userManager.GetUserAsync(this.User);
+
+            if (logedInUser.IsDeleted)
+            {
+                return BadRequest();
+            }
+
             var roleName = AdministratorRole;
             var roleExists = await roleManager.RoleExistsAsync(roleName);
 
@@ -115,6 +143,13 @@
 
         public async Task<IActionResult> Deactivate(string id)
         {
+            var logedInUser = await this.userManager.GetUserAsync(this.User);
+
+            if (logedInUser.IsDeleted)
+            {
+                return BadRequest();
+            }
+
             var user = await this.userManager.FindByIdAsync(id);
 
             if (user == null)
@@ -132,6 +167,13 @@
 
         public async Task<IActionResult> Activate(string id)
         {
+            var logedInUser = await this.userManager.GetUserAsync(this.User);
+
+            if (logedInUser.IsDeleted)
+            {
+                return BadRequest();
+            }
+
             var user = await this.userManager.FindByIdAsync(id);
 
             if (user == null)

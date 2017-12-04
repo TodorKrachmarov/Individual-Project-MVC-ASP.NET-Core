@@ -23,5 +23,7 @@
             string imageUrl,
             int CategoryId,
             string keyWords);
+
+        string Delete(int id);
     }
 }

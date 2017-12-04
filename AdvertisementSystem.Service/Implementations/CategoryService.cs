@@ -21,5 +21,8 @@
                     .Categories
                     .ProjectTo<AllCategoriesServiceModel>()
                     .ToList();
+
+        public bool Exist(int id)
+            => this.db.Categories.Any(c => c.Id == id);
     }
 }

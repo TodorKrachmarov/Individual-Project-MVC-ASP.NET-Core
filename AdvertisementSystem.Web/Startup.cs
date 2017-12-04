@@ -36,9 +36,9 @@
                 .AddEntityFrameworkStores<AdvertisementDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddAutoMapper();
-
             services.AddDomainServices();
+
+            services.AddAutoMapper();
 
             services.AddMvc(options =>
             {
