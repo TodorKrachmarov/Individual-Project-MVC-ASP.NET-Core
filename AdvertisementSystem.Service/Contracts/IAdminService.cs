@@ -31,5 +31,7 @@
         int AllCategoriesCount();
 
         int AllUsersCount();
+
+        bool IsDeleted(string id);
     }
 }

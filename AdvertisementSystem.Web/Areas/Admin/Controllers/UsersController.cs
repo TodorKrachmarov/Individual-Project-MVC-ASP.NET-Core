@@ -25,13 +25,24 @@
             this.roleManager = roleManager;
         }
 
-        public async Task<IActionResult> All(int page = 1)
+        public IActionResult All(int page = 1)
         {
-            var logedInUser = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.admin.IsDeleted(userId);
 
-            if (logedInUser.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
+            }
+
+            if (page > this.admin.AllUsersCount())
+            {
+                page = this.admin.AllUsersCount();
+            }
+
+            if (page < 0)
+            {
+                page = 1;
             }
 
             var model = new AdminUsersViewModel
@@ -46,9 +57,10 @@
 
         public async Task<IActionResult> ResetPassword(string id)
         {
-            var logedInUser = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.admin.IsDeleted(userId);
 
-            if (logedInUser.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }
@@ -67,9 +79,10 @@
         [HttpPost]
         public async Task<IActionResult> ResetPassword(string id, ChangeUserPasswordViewModel model)
         {
-            var logedInUser = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.admin.IsDeleted(userId);
 
-            if (logedInUser.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }
@@ -102,9 +115,10 @@
 
         public async Task<IActionResult> MakeAdmin(string id)
         {
-            var logedInUser = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.admin.IsDeleted(userId);
 
-            if (logedInUser.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }
@@ -130,7 +144,7 @@
                 }
                 else
                 {
-                    this.AddErrorMessage(result.ToString());
+                    this.AddErrorMessage($"User {user.Name} is already in role {roleName}");
                 }
             }
             else
@@ -143,9 +157,10 @@
 
         public async Task<IActionResult> Deactivate(string id)
         {
-            var logedInUser = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.admin.IsDeleted(userId);
 
-            if (logedInUser.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }
@@ -167,9 +182,10 @@
 
         public async Task<IActionResult> Activate(string id)
         {
-            var logedInUser = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.admin.IsDeleted(userId);
 
-            if (logedInUser.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }

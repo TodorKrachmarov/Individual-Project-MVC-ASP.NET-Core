@@ -8,6 +8,7 @@
     using AdvertisementSystem.Services.Models.Ad;
     using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
+    using System.Collections.Generic;
 
     public class AdService : IAdService
     {
@@ -58,9 +59,14 @@
                         .ProjectTo<EditAdServiceModel>()
                         .FirstOrDefault();
 
-        public void Edit(int id,string title, string description, string imageUrl, int CategoryId, string keyWords)
+        public bool Edit(int id, string title, string description, string imageUrl, int CategoryId, string keyWords)
         {
             var ad = this.db.Ads.Where(a => a.Id == id).Include(a => a.Tags).ThenInclude(a => a.Tag).FirstOrDefault();
+
+            if (ad == null)
+            {
+                return false;
+            }
 
             ad.Title = title;
             ad.Description = description;
@@ -84,13 +90,20 @@
 
                 ad.Tags.Add(new AdTag { TagId = t.Id, Tag = t });
             }
-            
+
             this.db.SaveChanges();
+
+            return true;
         }
 
         public string Delete(int id)
         {
             var ad = this.db.Ads.FirstOrDefault(a => a.Id == id);
+
+            if (ad == null)
+            {
+                return null;
+            }
 
             var name = ad.Title;
 
@@ -99,5 +112,8 @@
 
             return name;
         }
-    }
+
+        public bool ReadyToDelete(int id)
+            => this.db.Ads.Any(a => a.Id == id);
+     }
 }

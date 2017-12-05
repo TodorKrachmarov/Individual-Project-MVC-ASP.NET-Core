@@ -1,6 +1,7 @@
 ﻿namespace AdvertisementSystem.Services.Contracts
 {
     using Models.Ad;
+    using System.Collections.Generic;
 
     public interface IAdService
     {
@@ -16,7 +17,7 @@
 
         EditAdServiceModel FindToEdit(int id);
 
-        void Edit(
+        bool Edit(
             int id,
             string title,
             string description,
@@ -25,5 +26,7 @@
             string keyWords);
 
         string Delete(int id);
+
+        bool ReadyToDelete(int id);
     }
 }

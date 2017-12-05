@@ -159,5 +159,12 @@
 
         public int AllUsersCount()
             => (int)Math.Ceiling(this.db.Users.Count() / (double)PageSize);
+
+        public bool IsDeleted(string id)
+            => this.db
+                    .Users
+                    .Where(u => u.Id == id)
+                    .Select(u => u.IsDeleted)
+                    .FirstOrDefault();
     }
 }

@@ -9,7 +9,7 @@
     using Services.Contracts;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
+
     using static WebConstants;
 
     [Authorize]
@@ -17,20 +17,23 @@
     {
         private readonly IAdService adService;
         private readonly ICategoryService categoryService;
+        private readonly IUserService userService;
         private readonly UserManager<User> userManager;
 
-        public AdsController(IAdService adService, ICategoryService categoryService, UserManager<User> userManager)
+        public AdsController(IAdService adService, ICategoryService categoryService, UserManager<User> userManager, IUserService userService)
         {
             this.adService = adService;
             this.categoryService = categoryService;
             this.userManager = userManager;
+            this.userService = userService;
         }
 
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.userService.IsDeleted(userId);
 
-            if (user.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }
@@ -44,11 +47,12 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(AddEditAdViewModel model)
+        public IActionResult Create(AddEditAdViewModel model)
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.userService.IsDeleted(userId);
 
-            if (user.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }
@@ -66,33 +70,38 @@
 
                 return View(model);
             }
-
-            string authorId = this.userManager.GetUserId(this.User);
-            this.adService.Create(model.Title, model.Description, model.ImageUrl, model.Category, model.Keywords, authorId);
+            
+            this.adService.Create(model.Title, model.Description, model.ImageUrl, model.Category, model.Keywords, userId);
 
             this.AddSuccessMessage($"You created {model.Title} ad!");
             return this.RedirectToHome();
         }
 
-        public async Task<IActionResult> Edit(int id)
+        public IActionResult Edit(int id)
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.userService.IsDeleted(userId);
 
-            if (user.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }
+            
+            var exist = this.adService.Exists(id, userId);
 
-            string authorId = this.userManager.GetUserId(this.User);
-            var exist = this.adService.Exists(id, authorId);
-
-            if (!exist || !this.User.IsInRole(AdministratorRole))
+            if (!exist && !this.User.IsInRole(AdministratorRole))
             {
                 this.AddErrorMessage("The ad you want to edit does not exist!");
                 return this.RedirectToHome();
             }
 
             var ad = this.adService.FindToEdit(id);
+
+            if (ad == null)
+            {
+                this.AddErrorMessage("The ad you want to edit does not exist!");
+                return this.RedirectToHome();
+            }
 
             var viewModel = new AddEditAdViewModel
             {
@@ -108,19 +117,19 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, AddEditAdViewModel model)
+        public IActionResult Edit(int id, AddEditAdViewModel model)
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.userService.IsDeleted(userId);
 
-            if (user.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }
+            
+            var exist = this.adService.Exists(id, userId);
 
-            string authorId = this.userManager.GetUserId(this.User);
-            var exist = this.adService.Exists(id, authorId);
-
-            if (!exist || !this.User.IsInRole(AdministratorRole))
+            if (!exist && !this.User.IsInRole(AdministratorRole))
             {
                 this.AddErrorMessage("The ad you want to edit does not exist!");
                 return this.RedirectToHome();
@@ -140,52 +149,70 @@
                 return View(model);
             }
 
-            this.adService.Edit(id, model.Title, model.Description, model.ImageUrl, model.Category, model.Keywords);
+            var success = this.adService.Edit(id, model.Title, model.Description, model.ImageUrl, model.Category, model.Keywords);
+
+            if (!success)
+            {
+                this.AddErrorMessage("The ad you want to edit does not exist!");
+                return this.RedirectToHome();
+            }
 
             this.AddSuccessMessage($"You edited {model.Title} ad!");
             return this.RedirectToHome();
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.userService.IsDeleted(userId);
 
-            if (user.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }
 
-            string authorId = this.userManager.GetUserId(this.User);
-            var exist = this.adService.Exists(id, authorId);
+            var exist = this.adService.Exists(id, userId);
 
-            if (!exist || !this.User.IsInRole(AdministratorRole))
+            if (!exist && !this.User.IsInRole(AdministratorRole))
             {
-                this.AddErrorMessage("The ad you want to edit does not exist!");
+                this.AddErrorMessage("The ad you want to delete does not exist!");
+                return this.RedirectToHome();
+            }
+
+            if (!this.adService.ReadyToDelete(id))
+            {
+                this.AddErrorMessage("The ad you want to delete does not exist!");
                 return this.RedirectToHome();
             }
 
             return this.View(id);
         }
 
-        public async Task<IActionResult> Destroy(int id)
+        public IActionResult Destroy(int id)
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.userService.IsDeleted(userId);
 
-            if (user.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }
 
-            string authorId = this.userManager.GetUserId(this.User);
-            var exist = this.adService.Exists(id, authorId);
+            var exist = this.adService.Exists(id, userId);
 
-            if (!exist || !this.User.IsInRole(AdministratorRole))
+            if (!exist && !this.User.IsInRole(AdministratorRole))
             {
-                this.AddErrorMessage("The ad you want to edit does not exist!");
+                this.AddErrorMessage("The ad you want to delete does not exist!");
                 return this.RedirectToHome();
             }
 
             var name = this.adService.Delete(id);
+
+            if (name == null)
+            {
+                this.AddErrorMessage("The ad you want to delete does not exist!");
+                return this.RedirectToHome();
+            }
 
             this.AddSuccessMessage($"You deleted {name} ad!");
             return this.RedirectToHome();

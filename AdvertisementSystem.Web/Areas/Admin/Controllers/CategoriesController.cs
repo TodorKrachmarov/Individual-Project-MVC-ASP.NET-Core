@@ -22,13 +22,24 @@
             this.userManager = userManager;
         }
 
-        public async Task<IActionResult> All(int page = 1)
+        public IActionResult All(int page = 1)
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.admin.IsDeleted(userId);
 
-            if (user.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
+            }
+
+            if (page > this.admin.AllCategoriesCount())
+            {
+                page = this.admin.AllCategoriesCount();
+            }
+
+            if (page < 0)
+            {
+                page = 1;
             }
 
             var model = new AdminCategoryViewModel
@@ -41,11 +52,12 @@
             return this.View(model);
         }
 
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.admin.IsDeleted(userId);
 
-            if (user.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }
@@ -54,11 +66,12 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(AddEditCategoryServiceModel model)
+        public IActionResult Create(AddEditCategoryServiceModel model)
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.admin.IsDeleted(userId);
 
-            if (user.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }
@@ -81,11 +94,12 @@
             return this.RedirectToAllCategories();
         }
 
-        public async Task<IActionResult> Edit(int id)
+        public IActionResult Edit(int id)
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.admin.IsDeleted(userId);
 
-            if (user.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }
@@ -102,11 +116,12 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, AddEditCategoryServiceModel model)
+        public IActionResult Edit(int id, AddEditCategoryServiceModel model)
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.admin.IsDeleted(userId);
 
-            if (user.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }
@@ -137,11 +152,12 @@
             return this.RedirectToAllCategories();
         }
 
-        public async Task<IActionResult> Delete()
+        public IActionResult Delete()
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.admin.IsDeleted(userId);
 
-            if (user.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }
@@ -155,11 +171,12 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(DeleteCategoryViewModel model)
+        public IActionResult Delete(DeleteCategoryViewModel model)
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            string userId = this.userManager.GetUserId(this.User);
+            var isDeleted = this.admin.IsDeleted(userId);
 
-            if (user.IsDeleted)
+            if (isDeleted)
             {
                 return BadRequest();
             }

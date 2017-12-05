@@ -1,5 +1,6 @@
 ﻿namespace AdvertisementSystem.Services.Implementations
 {
+    using Models.Ad;
     using AutoMapper.QueryableExtensions;
     using Contracts;
     using Data;
@@ -24,5 +25,18 @@
 
         public bool Exist(int id)
             => this.db.Categories.Any(c => c.Id == id);
+
+        public IEnumerable<CategoriesHomeServiceModel> CategoriesToView()
+            => this.db
+                    .Categories
+                    .ProjectTo<CategoriesHomeServiceModel>()
+                    .ToList();
+
+        public IEnumerable<ListAdsServiceModel> AdsByCategory(int id)
+            => this.db
+                    .Ads
+                    .Where(a => a.CategoryId == id)
+                    .ProjectTo<ListAdsServiceModel>()
+                    .ToList();
     }
 }
