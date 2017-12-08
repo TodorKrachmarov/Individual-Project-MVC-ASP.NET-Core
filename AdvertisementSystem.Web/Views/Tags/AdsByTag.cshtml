@@ -1,10 +1,9 @@
 ﻿@model AdsViewModel
 @{
-    ViewData["Title"] = "AdsByCategory";
+    ViewData["Title"] = "AdsByTag";
 }
 
-
-<h1>You are in Category - @Model.Name</h1>
+<h1>Ads by Keyword - @Model.Name</h1>
 
 <br />
 <ul class="pagination">
@@ -32,3 +31,4 @@
         <a asp-route-page="@Model.NextPage">Next</a>
     </li>
 </ul>
+

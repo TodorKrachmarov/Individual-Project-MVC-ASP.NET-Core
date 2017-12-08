@@ -12,6 +12,10 @@
 
         IEnumerable<CategoriesHomeServiceModel> CategoriesToView();
 
-        IEnumerable<ListAdsServiceModel> AdsByCategory(int id);
+        IEnumerable<ListAdsServiceModel> AdsByCategory(int id, int page);
+
+        int TotalAdsByCategoryCount(int id);
+
+        string GetName(int id);
     }
 }

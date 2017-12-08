@@ -8,21 +8,19 @@
     using Services.Contracts;
 
 
-    public class CategoriesController : BaseController
+    public class UsersController : BaseController
     {
-        private readonly ICategoryService categoryService;
         private readonly IUserService userService;
         private readonly UserManager<User> userManager;
 
-        public CategoriesController(ICategoryService categoryService, IUserService userService, UserManager<User> userManager)
+        public UsersController(IUserService userService, UserManager<User> userManager)
         {
-            this.categoryService = categoryService;
             this.userService = userService;
             this.userManager = userManager;
         }
 
         [AllowAnonymous]
-        public IActionResult AdsByCategory(int id, int page = 1)
+        public IActionResult AdsByUser(string id, int page = 1)
         {
             if (this.User.Identity.IsAuthenticated)
             {
@@ -35,7 +33,7 @@
                 }
             }
 
-            var exist = this.categoryService.Exist(id);
+            var exist = this.userService.Exist(id);
 
             if (!exist)
             {
@@ -43,7 +41,7 @@
                 this.RedirectToHome();
             }
 
-            var totalPages = this.categoryService.TotalAdsByCategoryCount(id);
+            var totalPages = this.userService.TotalAdsByTagCount(id);
 
             if (page > totalPages)
             {
@@ -57,13 +55,40 @@
 
             var model = new AdsViewModel
             {
-                Ads = this.categoryService.AdsByCategory(id, page),
-                Name = this.categoryService.GetName(id),
+                Ads = this.userService.AdsByUser(id, page),
+                Name = this.userService.GetName(id),
                 TotalPages = totalPages,
                 CurrentPage = page
             };
 
             return this.View(model);
+        }
+        
+        [AllowAnonymous]
+        public IActionResult Profile(string id)
+        {
+            if (this.User.Identity.IsAuthenticated)
+            {
+                string userId = this.userManager.GetUserId(this.User);
+                var isDeleted = this.userService.IsDeleted(userId);
+
+                if (isDeleted)
+                {
+                    return BadRequest();
+                }
+            }
+
+            var exist = this.userService.Exist(id);
+
+            if (!exist)
+            {
+                this.AddErrorMessage("The category you are searching for does not exist!");
+                this.RedirectToHome();
+            }
+
+            var model = this.userService.GetProfile(id);
+
+            return View(model);
         }
     }
 }

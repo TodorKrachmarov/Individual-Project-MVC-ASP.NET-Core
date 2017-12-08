@@ -8,21 +8,21 @@
     using Services.Contracts;
 
 
-    public class CategoriesController : BaseController
+    public class TagsController : BaseController
     {
-        private readonly ICategoryService categoryService;
+        private readonly ITagService tagService;
         private readonly IUserService userService;
         private readonly UserManager<User> userManager;
 
-        public CategoriesController(ICategoryService categoryService, IUserService userService, UserManager<User> userManager)
+        public TagsController(ITagService tagService, IUserService userService, UserManager<User> userManager)
         {
-            this.categoryService = categoryService;
+            this.tagService = tagService;
             this.userService = userService;
             this.userManager = userManager;
         }
 
         [AllowAnonymous]
-        public IActionResult AdsByCategory(int id, int page = 1)
+        public IActionResult AdsByTag(int id, int page = 1)
         {
             if (this.User.Identity.IsAuthenticated)
             {
@@ -35,7 +35,7 @@
                 }
             }
 
-            var exist = this.categoryService.Exist(id);
+            var exist = this.tagService.Exist(id);
 
             if (!exist)
             {
@@ -43,7 +43,7 @@
                 this.RedirectToHome();
             }
 
-            var totalPages = this.categoryService.TotalAdsByCategoryCount(id);
+            var totalPages = this.tagService.TotalAdsByTagCount(id);
 
             if (page > totalPages)
             {
@@ -57,8 +57,8 @@
 
             var model = new AdsViewModel
             {
-                Ads = this.categoryService.AdsByCategory(id, page),
-                Name = this.categoryService.GetName(id),
+                Ads = this.tagService.AdsByTag(id, page),
+                Name = this.tagService.GetName(id),
                 TotalPages = totalPages,
                 CurrentPage = page
             };

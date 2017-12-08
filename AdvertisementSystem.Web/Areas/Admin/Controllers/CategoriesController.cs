@@ -32,9 +32,11 @@
                 return BadRequest();
             }
 
-            if (page > this.admin.AllCategoriesCount())
+            var totalPages = this.admin.AllCategoriesCount();
+
+            if (page > totalPages)
             {
-                page = this.admin.AllCategoriesCount();
+                page = totalPages;
             }
 
             if (page < 0)
@@ -46,7 +48,7 @@
             {
                 Categories = this.admin.GetCategories(page),
                 CurrentPage = page,
-                TotalPages = this.admin.AllCategoriesCount()
+                TotalPages = totalPages
             };
 
             return this.View(model);

@@ -1,0 +1,28 @@
+﻿@model IEnumerable<ListAdsServiceModel>
+@{
+    ViewData["Title"] = "_AdsViewPartial";
+}
+
+@foreach (var ad in Model)
+{
+    <div class="card col-md-4 thumbnail">
+        <img class="card-image-top img-responsive"
+             src="@ad.ImageUrl">
+        <div class="card-body">
+            <h4 class="card-title text-center">
+                <a asp-area="" asp-controller="Ads" asp-action="Details" asp-route-id="@ad.Id">@ad.Title</a>
+            </h4>
+            <p class="card-text text-center">Published On: @ad.PublishDate.ToShortDateString()</p>
+        </div>
+        <div class="card-footer">
+            <p class="card-text text-center">
+                Keywords:
+                @foreach (var tag in ad.Tags)
+                {
+                    <a asp-area="" asp-controller="Tags" asp-action="AdsByTag" asp-route-id="@tag.Id"> @tag.Name</a>
+                }
+            </p>
+        </div>
+    </div>
+}
+

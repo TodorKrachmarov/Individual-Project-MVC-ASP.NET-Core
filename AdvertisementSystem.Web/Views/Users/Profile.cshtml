@@ -1,0 +1,16 @@
+﻿@model UserProfileServiceModel
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<h2>Profile of @Model.Name</h2>
+
+<dl class="dl-horizontal">
+    <dt>Email:</dt>
+    <dd>@Model.Email</dd>
+    <dt>Phone:</dt>
+    <dd>@Model.PhoneNumber</dd>
+    <dt>Ads:</dt>
+    <dd>@Model.AdsCount <a asp-action="AdsByUser" asp-route-id="@Model.Id">See All</a></dd>
+</dl>
+

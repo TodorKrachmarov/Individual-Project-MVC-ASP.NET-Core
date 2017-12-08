@@ -35,9 +35,11 @@
                 return BadRequest();
             }
 
-            if (page > this.admin.AllUsersCount())
+            var totalPages = this.admin.AllUsersCount();
+
+            if (page > totalPages)
             {
-                page = this.admin.AllUsersCount();
+                page = totalPages;
             }
 
             if (page < 0)
@@ -49,7 +51,7 @@
             {
                 Users = this.admin.GetUsers(page),
                 CurrentPage = page,
-                TotalPages = this.admin.AllUsersCount()
+                TotalPages = totalPages
             };
 
             return this.View(model);

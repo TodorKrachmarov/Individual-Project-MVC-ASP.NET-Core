@@ -11,8 +11,7 @@
     using System.Linq;
 
     using static WebConstants;
-
-    [Authorize]
+    
     public class AdsController : BaseController
     {
         private readonly IAdService adService;
@@ -74,7 +73,7 @@
             this.adService.Create(model.Title, model.Description, model.ImageUrl, model.Category, model.Keywords, userId);
 
             this.AddSuccessMessage($"You created {model.Title} ad!");
-            return this.RedirectToHome();
+            return this.RedirectToAction(nameof(CategoriesController.AdsByCategory), "Categories", new { id = model.Category});
         }
 
         public IActionResult Edit(int id)
