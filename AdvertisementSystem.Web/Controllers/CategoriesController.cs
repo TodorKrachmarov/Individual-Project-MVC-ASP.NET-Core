@@ -50,7 +50,7 @@
                 page = totalPages;
             }
 
-            if (page < 0)
+            if (page <= 0)
             {
                 page = 1;
             }

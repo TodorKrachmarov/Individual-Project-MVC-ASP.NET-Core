@@ -37,7 +37,7 @@
 
             if (!exist)
             {
-                this.AddErrorMessage("The category you are searching for does not exist!");
+                this.AddErrorMessage("The user you are searching for does not exist!");
                 this.RedirectToHome();
             }
 
@@ -48,7 +48,7 @@
                 page = totalPages;
             }
 
-            if (page < 0)
+            if (page <= 0)
             {
                 page = 1;
             }
@@ -82,7 +82,7 @@
 
             if (!exist)
             {
-                this.AddErrorMessage("The category you are searching for does not exist!");
+                this.AddErrorMessage("The user you are searching for does not exist!");
                 this.RedirectToHome();
             }
 

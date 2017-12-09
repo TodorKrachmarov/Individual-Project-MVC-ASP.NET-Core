@@ -4,6 +4,13 @@
 }
 
 <h2>Profile of @Model.Name</h2>
+@if (User.Identity.IsAuthenticated)
+{
+    if (Model.Email == User.Identity.Name)
+    {
+        <a asp-area="" asp-controller="Manage" asp-action="Index" class="btn btn-group-lg btn-success" >Edit Profile</a>
+    }
+}
 
 <dl class="dl-horizontal">
     <dt>Email:</dt>
@@ -13,4 +20,3 @@
     <dt>Ads:</dt>
     <dd>@Model.AdsCount <a asp-action="AdsByUser" asp-route-id="@Model.Id">See All</a></dd>
 </dl>
-
