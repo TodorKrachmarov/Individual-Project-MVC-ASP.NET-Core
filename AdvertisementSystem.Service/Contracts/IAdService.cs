@@ -1,7 +1,6 @@
 ﻿namespace AdvertisementSystem.Services.Contracts
 {
     using Models.Ad;
-    using System.Collections.Generic;
 
     public interface IAdService
     {
@@ -28,5 +27,7 @@
         string Delete(int id);
 
         bool ReadyToDelete(int id);
+
+        AdDetailsServiceModel Details(int id);
     }
 }

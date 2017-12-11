@@ -1,0 +1,27 @@
+﻿@model IEnumerable<ListCommentServiceModel>
+@{
+    ViewData["Title"] = "_ViewComments";
+}
+
+<h3>Comments:</h3>
+<div class="col-md-push-3 col-md-6">
+    @foreach (var com in Model)
+    {
+        <p>@com.Content</p>
+        <p class="pull-right"><strong>Author: </strong>@com.AuthorName</p>
+        <p>
+            @if (User.Identity.IsAuthenticated)
+            {
+                if (User.Identity.Name == com.AuthorEmail
+                    || User.IsInRole("Administrator"))
+                {
+                    <a asp-controller="Comments" asp-action="Edit" asp-route-id="@com.Id" class="btn btn-group btn-warning">Edit</a>
+                    <a asp-controller="Comments" asp-action="Delete" asp-route-id="@com.Id" class="btn btn-group btn-danger">Delete</a>
+                }
+            }
+        </p>
+    }
+</div>
+
+
+

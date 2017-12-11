@@ -216,6 +216,31 @@
             this.AddSuccessMessage($"You deleted {name} ad!");
             return this.RedirectToHome();
         }
+
+        [AllowAnonymous]
+        public IActionResult Details(int id)
+        {
+            if (this.User.Identity.IsAuthenticated)
+            {
+                string userId = this.userManager.GetUserId(this.User);
+                var isDeleted = this.userService.IsDeleted(userId);
+
+                if (isDeleted)
+                {
+                    return BadRequest();
+                }
+            }
+
+            var model = this.adService.Details(id);
+
+            if (model == null)
+            {
+                this.AddErrorMessage("The ad you are searching for does not exist!");
+                return this.RedirectToHome();
+            }
+
+            return this.View(model);
+        }
         
         private IEnumerable<SelectListItem> Categories()
             => this.categoryService

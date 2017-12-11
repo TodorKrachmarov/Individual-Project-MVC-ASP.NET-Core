@@ -1,0 +1,25 @@
+﻿@model int
+@{
+    ViewData["Title"] = "_AddCommentForm";
+}
+<div class="row">
+    <div class="col-md-push-3 col-md-6">
+        <form method="post" action="/Comments/Create" class="">
+            <div class="form-group">
+                <textarea name="Content" class="form-control" rows="5" required minlength="20" maxlength="200"></textarea>
+                @if (this.TempData.ContainsKey("contentError"))
+                {
+                    <span class="text-danger">@this.TempData["contentError"]</span>
+                }
+            </div>
+            <div class="form-group">
+                <input name="AdId" value="@Model" class="form-control" type="hidden" />
+            </div>
+            <button type="submit" class="btn btn-info">Submit Comment</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

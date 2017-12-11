@@ -1,0 +1,59 @@
+﻿@model AdDetailsServiceModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center">
+
+            <h1 class="display-3">@Model.Title</h1>
+            @if (User.Identity.IsAuthenticated)
+            {
+                if (User.Identity.Name == Model.AuthorEmail
+                    || User.IsInRole("Administrator"))
+                {
+                    <a asp-controller="Ads" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-group btn-warning">Edit</a>
+                    <a asp-controller="Ads" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-group btn-danger">Delete</a>
+                }
+            }
+            <br />
+            <br />
+
+            <img class="img-center"
+                 src="@Model.ImageUrl">
+
+            <br />
+            <br />
+            <p><strong>Description:</strong></p>
+            <p>
+                @Model.Description
+            </p>
+
+            <p><strong>Author: </strong><a asp-area="" asp-controller="Users" asp-action="Profile" asp-route-id="@Model.AuthorId">@Model.AuthorName</a></p>
+            <p>
+                <strong>Keywords: </strong>
+                @foreach (var tag in Model.Tags)
+                {
+                    <a asp-area="" asp-controller="Tags" asp-action="AdsByTag" asp-route-id="@tag.Id"> @tag.Name</a>
+                }
+            </p>
+            <p><strong>Published On: </strong>@Model.PublishDate.ToShortDateString()</p>
+            <p><strong>Category: </strong><a asp-area="" asp-controller="Categories" asp-action="AdsByCategory" asp-route-id="@Model.CategoryId">@Model.CategoryName</a></p>
+            
+            <br />
+            <br />
+            @if (this.User.Identity.IsAuthenticated)
+            {
+                @Html.Partial("_AddCommentForm", Model.Id)
+            }
+
+            @if (Model.Comments.Any())
+            {
+                @Html.Partial("_ViewComments", Model.Comments)
+            }
+        </div>
+    </div>
+</div>

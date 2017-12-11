@@ -115,5 +115,12 @@
 
         public bool ReadyToDelete(int id)
             => this.db.Ads.Any(a => a.Id == id);
-     }
+
+        public AdDetailsServiceModel Details(int id)
+            => this.db
+                    .Ads
+                    .Where(a => a.Id == id)
+                    .ProjectTo<AdDetailsServiceModel>()
+                    .FirstOrDefault();
+    }
 }
