@@ -10,14 +10,18 @@
     <a asp-action="Delete" class="btn btn-group-lg btn-danger">Delete Category</a>
 </div>
 <br />
-<ul class="pagination">
-    <li class="page-item @(Model.PreviosPage == Model.CurrentPage ? "disabled" : string.Empty)">
-        <a asp-route-page="@Model.PreviosPage">Previous</a>
-    </li>
-    <li class="page-item @(Model.NextPage == Model.CurrentPage ? "disabled" : string.Empty)">
-        <a asp-route-page="@Model.NextPage">Next</a>
-    </li>
-</ul>
+<div class="row">
+    <div class="col-md-push-5 col-md-2">
+        <ul class="pagination">
+            <li class="page-item @(Model.PreviosPage == Model.CurrentPage ? "disabled" : string.Empty)">
+                <a asp-route-page="@Model.PreviosPage">Previous</a>
+            </li>
+            <li class="page-item @(Model.NextPage == Model.CurrentPage ? "disabled" : string.Empty)">
+                <a asp-route-page="@Model.NextPage">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
 <table class="table table-bordered table-hover">
     <tr>
         <th>Name</th>
@@ -30,14 +34,17 @@
         </tr>
     }
 </table>
-<ul class="pagination">
-    <li class="page-item @(Model.PreviosPage == Model.CurrentPage ? "disabled" : string.Empty)">
-        <a asp-route-page="@Model.PreviosPage">Previous</a>
-    </li>
-    <li class="page-item @(Model.NextPage == Model.CurrentPage ? "disabled" : string.Empty)">
-        <a asp-route-page="@Model.NextPage">Next</a>
-    </li>
-</ul>
-
+<div class="row">
+    <div class="col-md-push-5 col-md-2">
+        <ul class="pagination">
+            <li class="page-item @(Model.PreviosPage == Model.CurrentPage ? "disabled" : string.Empty)">
+                <a asp-route-page="@Model.PreviosPage">Previous</a>
+            </li>
+            <li class="page-item @(Model.NextPage == Model.CurrentPage ? "disabled" : string.Empty)">
+                <a asp-route-page="@Model.NextPage">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
 
 

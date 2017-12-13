@@ -6,10 +6,11 @@
 
     public class ListCommentServiceModel : IMapFrom<Comment>, IHaveCustomMapping
     {
-        public string Content { get; set; }
 
         public int Id { get; set; }
 
+        public string Content { get; set; }
+        
         public string AuthorName { get; set; }
 
         public string AuthorEmail { get; set; }

@@ -24,5 +24,20 @@
 
         public IActionResult RedirectToAllUsers()
             => this.RedirectToAction(nameof(UsersController.All), "Users");
+
+        public int VerifyPageValue(int page, int totalPages)
+        {
+            if (page > totalPages)
+            {
+                return totalPages;
+            }
+
+            if (page <= 0)
+            {
+                return 1;
+            }
+
+            return page;
+        }
     }
 }

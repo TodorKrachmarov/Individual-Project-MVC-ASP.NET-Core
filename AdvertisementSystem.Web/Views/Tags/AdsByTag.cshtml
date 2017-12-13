@@ -6,14 +6,18 @@
 <h1>Ads by Keyword - @Model.Name</h1>
 
 <br />
-<ul class="pagination">
-    <li class="page-item @(Model.PreviosPage == Model.CurrentPage ? "disabled" : string.Empty)">
-        <a asp-route-page="@Model.PreviosPage">Previous</a>
-    </li>
-    <li class="page-item @(Model.NextPage == Model.CurrentPage ? "disabled" : string.Empty)">
-        <a asp-route-page="@Model.NextPage">Next</a>
-    </li>
-</ul>
+<div class="row">
+    <div class="col-md-push-5 col-md-2">
+        <ul class="pagination">
+            <li class="page-item @(Model.PreviosPage == Model.CurrentPage ? "disabled" : string.Empty)">
+                <a asp-route-page="@Model.PreviosPage">Previous</a>
+            </li>
+            <li class="page-item @(Model.NextPage == Model.CurrentPage ? "disabled" : string.Empty)">
+                <a asp-route-page="@Model.NextPage">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
 <div class="container">
     <div class="row">
         <div class="col-12">
@@ -23,12 +27,16 @@
         </div>
     </div>
 </div>
-<ul class="pagination">
-    <li class="page-item @(Model.PreviosPage == Model.CurrentPage ? "disabled" : string.Empty)">
-        <a asp-route-page="@Model.PreviosPage">Previous</a>
-    </li>
-    <li class="page-item @(Model.NextPage == Model.CurrentPage ? "disabled" : string.Empty)">
-        <a asp-route-page="@Model.NextPage">Next</a>
-    </li>
-</ul>
+<div class="row">
+    <div class="col-md-push-5 col-md-2">
+        <ul class="pagination">
+            <li class="page-item @(Model.PreviosPage == Model.CurrentPage ? "disabled" : string.Empty)">
+                <a asp-route-page="@Model.PreviosPage">Previous</a>
+            </li>
+            <li class="page-item @(Model.NextPage == Model.CurrentPage ? "disabled" : string.Empty)">
+                <a asp-route-page="@Model.NextPage">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
 

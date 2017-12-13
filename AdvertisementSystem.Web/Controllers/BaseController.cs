@@ -18,5 +18,20 @@
 
         public IActionResult RedirectToHome()
             => this.RedirectToAction(nameof(HomeController.Index), "Home");
+
+        public int VerifyPageValue(int page, int totalPages)
+        {
+            if (page > totalPages)
+            {
+                return totalPages;
+            }
+
+            if (page <= 0)
+            {
+                return 1;
+            }
+
+            return page;
+        }
     }
 }

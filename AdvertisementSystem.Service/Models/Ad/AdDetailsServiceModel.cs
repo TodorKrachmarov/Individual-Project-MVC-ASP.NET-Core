@@ -30,16 +30,13 @@
         public int CategoryId { get; set; }
 
         public string CategoryName { get; set; }
-
-        public IEnumerable<ListCommentServiceModel> Comments { get; set; }
-
+        
         public IEnumerable<TagServiceModel> Tags { get; set; }
 
         public void ConfigureMapping(Profile mapper)
             => mapper
                     .CreateMap<Ad, AdDetailsServiceModel>()
                     .ForMember(e => e.Tags, cfg => cfg.MapFrom(a => a.Tags.Select(t => t.Tag)))
-                    .ForMember(e => e.Comments, cfg => cfg.MapFrom(a => a.Comments))
                     .ForMember(e => e.AuthorName, cfg => cfg.MapFrom(a => a.Author.Name))
                     .ForMember(e => e.AuthorEmail, cfg => cfg.MapFrom(a => a.Author.Email))
                     .ForMember(e => e.CategoryName, cfg => cfg.MapFrom(a => a.Category.Name));

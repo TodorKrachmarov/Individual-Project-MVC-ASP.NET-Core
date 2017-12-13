@@ -1,11 +1,11 @@
-﻿@model IEnumerable<ListCommentServiceModel>
+﻿@model ListCommentsViewModel
 @{
     ViewData["Title"] = "_ViewComments";
 }
 
 <h3>Comments:</h3>
 <div class="col-md-push-3 col-md-6">
-    @foreach (var com in Model)
+    @foreach (var com in Model.Comments)
     {
         <p>@com.Content</p>
         <p class="pull-right"><strong>Author: </strong>@com.AuthorName</p>
@@ -21,7 +21,18 @@
             }
         </p>
     }
+    <div class="col-md-push-4">
+        <ul class="pagination">
+            <li class="page-item @(Model.PreviosPage == Model.CurrentPage ? "disabled" : string.Empty)">
+                <a asp-route-page="@Model.PreviosPage">Previous</a>
+            </li>
+            <li class="page-item @(Model.NextPage == Model.CurrentPage ? "disabled" : string.Empty)">
+                <a asp-route-page="@Model.NextPage">Next</a>
+            </li>
+        </ul>
+    </div>
 </div>
+
 
 
 

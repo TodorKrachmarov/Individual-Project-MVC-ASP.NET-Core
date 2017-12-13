@@ -1,4 +1,4 @@
-﻿@model AdDetailsServiceModel
+﻿@model AdDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -42,15 +42,15 @@
             </p>
             <p><strong>Published On: </strong>@Model.PublishDate.ToShortDateString()</p>
             <p><strong>Category: </strong><a asp-area="" asp-controller="Categories" asp-action="AdsByCategory" asp-route-id="@Model.CategoryId">@Model.CategoryName</a></p>
-            
+
             <br />
             <br />
             @if (this.User.Identity.IsAuthenticated)
             {
                 @Html.Partial("_AddCommentForm", Model.Id)
             }
-
-            @if (Model.Comments.Any())
+            <hr />
+            @if (Model.Comments.Comments.Any())
             {
                 @Html.Partial("_ViewComments", Model.Comments)
             }

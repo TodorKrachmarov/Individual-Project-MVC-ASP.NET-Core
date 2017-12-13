@@ -1,5 +1,6 @@
 ﻿namespace AdvertisementSystem.Web.Controllers
 {
+    using System;
     using Data.Models;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
@@ -42,17 +43,8 @@
             }
 
             var totalPages = this.userService.TotalAdsByTagCount(id);
-
-            if (page > totalPages)
-            {
-                page = totalPages;
-            }
-
-            if (page <= 0)
-            {
-                page = 1;
-            }
-
+            page = this.VerifyPageValue(page, totalPages);
+            
             var model = new AdsViewModel
             {
                 Ads = this.userService.AdsByUser(id, page),
@@ -63,7 +55,7 @@
 
             return this.View(model);
         }
-        
+                
         [AllowAnonymous]
         public IActionResult Profile(string id)
         {

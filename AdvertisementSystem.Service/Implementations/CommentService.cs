@@ -3,10 +3,14 @@
     using Contracts;
     using Data;
     using Data.Models;
+    using System;
     using System.Linq;
     using Models.Comment;
     using AutoMapper.QueryableExtensions;
+    using System.Collections.Generic;
 
+    using static Data.DataConstants;
+    
     public class CommentService : ICommentService
     {
         private readonly AdvertisementDbContext db;
@@ -75,5 +79,26 @@
             return adId;
         }
 
-     }
+        public IEnumerable<ListCommentServiceModel> AdComments(int adId, int page) 
+            => this.db
+                    .Comments
+                    .OrderByDescending(a => a.Id)
+                    .Skip((page - 1) * PageSize)
+                    .Take(PageSize)
+                    .Where(a => a.AdId == adId)
+                    .ProjectTo<ListCommentServiceModel>()
+                    .ToList();
+
+        public int TotalAdComentsCount(int adId)
+        {
+            var count = this.db
+                            .Comments
+                            .Where(a => a.AdId == adId)
+                            .Count();
+
+            var num = Math.Ceiling(count / (double)PageSize);
+
+            return (int)num;
+        }
+    }
 }

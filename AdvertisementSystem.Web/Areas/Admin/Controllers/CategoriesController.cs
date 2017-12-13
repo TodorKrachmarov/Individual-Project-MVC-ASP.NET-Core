@@ -33,16 +33,7 @@
             }
 
             var totalPages = this.admin.AllCategoriesCount();
-
-            if (page > totalPages)
-            {
-                page = totalPages;
-            }
-
-            if (page <= 0)
-            {
-                page = 1;
-            }
+            page = this.VerifyPageValue(page, totalPages);
 
             var model = new AdminCategoryViewModel
             {

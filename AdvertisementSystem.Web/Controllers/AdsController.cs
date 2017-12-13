@@ -1,5 +1,6 @@
 ﻿namespace AdvertisementSystem.Web.Controllers
 {
+    using AdvertisementSystem.Web.Models.Comments;
     using Data.Models;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
@@ -11,20 +12,22 @@
     using System.Linq;
 
     using static WebConstants;
-    
+
     public class AdsController : BaseController
     {
         private readonly IAdService adService;
         private readonly ICategoryService categoryService;
+        private readonly ICommentService commentService;
         private readonly IUserService userService;
         private readonly UserManager<User> userManager;
 
-        public AdsController(IAdService adService, ICategoryService categoryService, UserManager<User> userManager, IUserService userService)
+        public AdsController(IAdService adService, ICategoryService categoryService, UserManager<User> userManager, IUserService userService, ICommentService commentService)
         {
             this.adService = adService;
             this.categoryService = categoryService;
             this.userManager = userManager;
             this.userService = userService;
+            this.commentService = commentService;
         }
 
         public IActionResult Create()
@@ -69,11 +72,11 @@
 
                 return View(model);
             }
-            
+
             this.adService.Create(model.Title, model.Description, model.ImageUrl, model.Category, model.Keywords, userId);
 
             this.AddSuccessMessage($"You created {model.Title} ad!");
-            return this.RedirectToAction(nameof(CategoriesController.AdsByCategory), "Categories", new { id = model.Category});
+            return this.RedirectToAction(nameof(CategoriesController.AdsByCategory), "Categories", new { id = model.Category });
         }
 
         public IActionResult Edit(int id)
@@ -85,7 +88,7 @@
             {
                 return BadRequest();
             }
-            
+
             var exist = this.adService.Exists(id, userId);
 
             if (!exist && !this.User.IsInRole(AdministratorRole))
@@ -125,7 +128,7 @@
             {
                 return BadRequest();
             }
-            
+
             var exist = this.adService.Exists(id, userId);
 
             if (!exist && !this.User.IsInRole(AdministratorRole))
@@ -218,7 +221,7 @@
         }
 
         [AllowAnonymous]
-        public IActionResult Details(int id)
+        public IActionResult Details(int id, int page = 1)
         {
             if (this.User.Identity.IsAuthenticated)
             {
@@ -231,17 +234,41 @@
                 }
             }
 
-            var model = this.adService.Details(id);
+            var ad = this.adService.Details(id);
 
-            if (model == null)
+            if (ad == null)
             {
                 this.AddErrorMessage("The ad you are searching for does not exist!");
                 return this.RedirectToHome();
             }
 
+            var totalPages = this.commentService.TotalAdComentsCount(id);
+            page = this.VerifyPageValue(page, totalPages);
+
+            var model = new AdDetailsViewModel
+            {
+                Id = ad.Id,
+                Title = ad.Title,
+                Description = ad.Description,
+                ImageUrl = ad.ImageUrl,
+                PublishDate = ad.PublishDate,
+                AuthorId = ad.AuthorId,
+                AuthorName = ad.AuthorName,
+                AuthorEmail = ad.AuthorEmail,
+                CategoryId = ad.CategoryId,
+                CategoryName = ad.CategoryName,
+                Tags = ad.Tags,
+                Comments = new ListCommentsViewModel
+                {
+                    Comments = this.commentService.AdComments(id, page),
+                    TotalPages = totalPages,
+                    CurrentPage = page
+                }
+            };
+
             return this.View(model);
         }
-        
+
         private IEnumerable<SelectListItem> Categories()
             => this.categoryService
                                   .All()

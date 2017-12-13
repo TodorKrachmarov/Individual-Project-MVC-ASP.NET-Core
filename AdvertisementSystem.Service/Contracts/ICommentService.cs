@@ -1,6 +1,7 @@
 ﻿namespace AdvertisementSystem.Services.Contracts
 {
     using Models.Comment;
+    using System.Collections.Generic;
 
     public interface ICommentService
     {
@@ -19,5 +20,9 @@
         DeleteCommentServiceModel FindToDelete(int id);
 
         int Delete(int id);
+
+        IEnumerable<ListCommentServiceModel> AdComments(int adId, int page);
+
+        int TotalAdComentsCount(int adId);
     }
 }
