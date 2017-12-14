@@ -40,7 +40,7 @@
                     <a asp-area="" asp-controller="Tags" asp-action="AdsByTag" asp-route-id="@tag.Id"> @tag.Name</a>
                 }
             </p>
-            <p><strong>Published On: </strong>@Model.PublishDate.ToShortDateString()</p>
+            <p><strong>Published On: </strong>@Html.DisplayFor(x => x.PublishDate)</p>
             <p><strong>Category: </strong><a asp-area="" asp-controller="Categories" asp-action="AdsByCategory" asp-route-id="@Model.CategoryId">@Model.CategoryName</a></p>
 
             <br />
