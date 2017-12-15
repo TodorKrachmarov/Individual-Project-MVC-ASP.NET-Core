@@ -13,7 +13,7 @@
             @if (User.Identity.IsAuthenticated)
             {
                 if (User.Identity.Name == Model.AuthorEmail
-                    || User.IsInRole("Administrator"))
+                    || User.IsInRole(WebConstants.AdministratorRole))
                 {
                     <a asp-controller="Ads" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-group btn-warning">Edit</a>
                     <a asp-controller="Ads" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-group btn-danger">Delete</a>
@@ -49,9 +49,10 @@
             {
                 @Html.Partial("_AddCommentForm", Model.Id)
             }
-            <hr />
+            
             @if (Model.Comments.Comments.Any())
             {
+                <hr />
                 @Html.Partial("_ViewComments", Model.Comments)
             }
         </div>

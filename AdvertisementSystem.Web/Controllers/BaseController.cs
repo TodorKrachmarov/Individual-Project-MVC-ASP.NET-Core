@@ -23,7 +23,12 @@
         {
             if (page > totalPages)
             {
-                return totalPages;
+                if (totalPages > 0)
+                {
+                    return totalPages;
+                }
+
+                return 1;
             }
 
             if (page <= 0)

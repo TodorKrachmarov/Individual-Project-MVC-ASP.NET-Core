@@ -9,7 +9,9 @@
                 <textarea name="Content" class="form-control" rows="5" required minlength="20" maxlength="200"></textarea>
                 @if (this.TempData.ContainsKey("commentError"))
                 {
-                    <span class="text-danger"><strong>@this.TempData["commentError"]</strong></span>
+                    <div class="alert alert-danger">
+                        <span class="text-danger"><strong>@this.TempData["commentError"]</strong></span>
+                    </div>
                 }
             </div>
             <div class="form-group">

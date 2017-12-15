@@ -34,7 +34,7 @@
                     {
                         <li><a asp-area="" asp-controller="Ads" asp-action="Create">New Ad</a></li>
                     }
-                    @if (Context.User.IsInRole("Administrator"))
+                    @if (Context.User.IsInRole(WebConstants.AdministratorRole))
                     {
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown">

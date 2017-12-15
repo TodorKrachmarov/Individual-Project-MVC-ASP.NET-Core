@@ -160,7 +160,7 @@
             }
 
             this.AddSuccessMessage($"You edited {model.Title} ad!");
-            return this.RedirectToHome();
+            return this.RedirectToAction(nameof(AdsController.Details), "Ads", new { id = id });
         }
 
         public IActionResult Delete(int id)
@@ -217,7 +217,8 @@
             }
 
             this.AddSuccessMessage($"You deleted {name} ad!");
-            return this.RedirectToHome();
+            return RedirectToAction(nameof(UsersController.AdsByUser), "Users", new { id = userId });
+            
         }
 
         [AllowAnonymous]
