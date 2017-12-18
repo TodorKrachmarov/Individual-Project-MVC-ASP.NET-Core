@@ -40,6 +40,12 @@
 
             services.AddAutoMapper();
 
+            services.AddAuthentication().AddFacebook(fo =>
+            {
+                fo.AppId = "1617983298266201";
+                fo.AppSecret = "f92edcb982354dba8dd6c3adfea95f72";
+            });
+
             services.AddMvc(options =>
             {
                 options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();

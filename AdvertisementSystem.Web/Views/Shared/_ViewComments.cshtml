@@ -15,7 +15,7 @@
             @if (User.Identity.IsAuthenticated)
                 {
                     if (User.Identity.Name == com.AuthorEmail
-                        || User.IsInRole("Administrator"))
+                        || User.IsInRole(WebConstants.AdministratorRole))
                     {
                     <a asp-controller="Comments" asp-action="Edit" asp-route-id="@com.Id" class="btn btn-group btn-warning">Edit</a>
                     <a asp-controller="Comments" asp-action="Delete" asp-route-id="@com.Id" class="btn btn-group btn-danger">Delete</a>
