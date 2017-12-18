@@ -1,4 +1,0 @@
-# exercise-repo
-
-
-hello
