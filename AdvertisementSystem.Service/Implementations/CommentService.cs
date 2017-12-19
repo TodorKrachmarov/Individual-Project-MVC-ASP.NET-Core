@@ -82,10 +82,10 @@
         public IEnumerable<ListCommentServiceModel> AdComments(int adId, int page) 
             => this.db
                     .Comments
+                    .Where(a => a.AdId == adId)
                     .OrderByDescending(a => a.Id)
                     .Skip((page - 1) * PageSize)
                     .Take(PageSize)
-                    .Where(a => a.AdId == adId)
                     .ProjectTo<ListCommentServiceModel>()
                     .ToList();
 

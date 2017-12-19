@@ -38,10 +38,10 @@
         public IEnumerable<ListAdsServiceModel> AdsByCategory(int id, int page)
             => this.db
                     .Ads
+                    .Where(a => a.CategoryId == id)
                     .OrderByDescending(a => a.PublishDate)
                     .Skip((page - 1) * PageSize)
                     .Take(PageSize)
-                    .Where(a => a.CategoryId == id)
                     .ProjectTo<ListAdsServiceModel>()
                     .ToList();
 

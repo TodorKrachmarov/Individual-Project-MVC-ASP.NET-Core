@@ -22,10 +22,10 @@
         public IEnumerable<ListAdsServiceModel> AdsByTag(int id, int page)
             => this.db
                     .Ads
+                    .Where(a => a.Tags.Any(t => t.TagId == id))
                     .OrderByDescending(a => a.PublishDate)
                     .Skip((page - 1) * PageSize)
                     .Take(PageSize)
-                    .Where(a => a.Tags.Any(t => t.TagId == id))
                     .ProjectTo<ListAdsServiceModel>()
                     .ToList();
 
