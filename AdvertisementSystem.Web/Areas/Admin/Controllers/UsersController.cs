@@ -25,7 +25,7 @@
             this.roleManager = roleManager;
         }
 
-        public IActionResult All(int page = 1)
+        public async Task<IActionResult> All(string searchTerm, int page = 1)
         {
             string userId = this.userManager.GetUserId(this.User);
             var isDeleted = this.admin.IsDeleted(userId);
@@ -40,7 +40,7 @@
 
             var model = new AdminUsersViewModel
             {
-                Users = this.admin.GetUsers(page),
+                Users = await this.admin.GetUsers(page, searchTerm),
                 CurrentPage = page,
                 TotalPages = totalPages
             };
@@ -56,6 +56,12 @@
             if (isDeleted)
             {
                 return BadRequest();
+            }
+
+            if (this.admin.IsDeleted(id))
+            {
+                this.AddErrorMessage("The user you are trying to reset the password is deactivated!");
+                return this.RedirectToAllUsers();
             }
 
             var user = await this.userManager.FindByIdAsync(id);
@@ -78,6 +84,12 @@
             if (isDeleted)
             {
                 return BadRequest();
+            }
+
+            if (this.admin.IsDeleted(id))
+            {
+                this.AddErrorMessage("The user you are trying to reset the password is deactivated!");
+                return this.RedirectToAllUsers();
             }
 
             var user = await this.userManager.FindByIdAsync(id);
@@ -114,6 +126,12 @@
             if (isDeleted)
             {
                 return BadRequest();
+            }
+
+            if (this.admin.IsDeleted(id))
+            {
+                this.AddErrorMessage($"The user you are trying to make an {AdministratorRole} is deactivated!");
+                return this.RedirectToAllUsers();
             }
 
             var roleName = AdministratorRole;

@@ -5,6 +5,13 @@
 }
 
 <h2>@ViewData["Title"]</h2>
+<form class="form-inline">
+    <div class="form-inline">
+        <label id="search">Search Email:</label>
+        <input id="search" name="searchTerm" type="text" />
+        <button type="submit" class="btn btn-primary btn-sm">Search</button>
+    </div>
+</form>
 <hr />
 <div class="row">
     <div class="col-md-push-5 col-md-2">
@@ -38,7 +45,10 @@
                     <a asp-action="Deactivate" asp-route-id="@user.Id" class="btn btn-danger btn-group-sm">Deactivate</a>
                 }
                 <a asp-action="ResetPassword" asp-route-id="@user.Id" class="btn btn-warning btn-group-sm">Reset Password</a>
-                <a asp-action="MakeAdmin" asp-route-id="@user.Id" class="btn btn-success btn-group-sm">Make Admin</a>
+                @if (!user.IsAdmin)
+                {
+                    <a asp-action="MakeAdmin" asp-route-id="@user.Id" class="btn btn-success btn-group-sm">Make Admin</a>
+                }
             </td>
         </tr>
     }

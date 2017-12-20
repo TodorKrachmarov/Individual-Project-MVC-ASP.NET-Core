@@ -3,6 +3,7 @@
     using Models.Admin.Category;
     using Models.Admin.Users;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     public interface IAdminService
     {
@@ -22,7 +23,7 @@
 
         string CategoryName(int id);
 
-        IEnumerable<UsersListingServiceModel> GetUsers(int page);
+        Task<IEnumerable<UsersListingServiceModel>> GetUsers(int page, string searchTerm);
 
         void DeactivateUser(string id);
 

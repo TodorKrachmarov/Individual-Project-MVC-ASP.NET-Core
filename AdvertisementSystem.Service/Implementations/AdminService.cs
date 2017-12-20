@@ -1,24 +1,27 @@
 ﻿namespace AdvertisementSystem.Services.Implementations
 {
-    using Data.Models;
+    using AdvertisementSystem.Services.Models.Admin.Users;
     using AutoMapper.QueryableExtensions;
     using Contracts;
     using Data;
+    using Data.Models;
+    using Microsoft.AspNetCore.Identity;
     using Models.Admin.Category;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using AdvertisementSystem.Services.Models.Admin.Users;
-
+    using System.Threading.Tasks;
     using static Data.DataConstants;
-    using System;
 
     public class AdminService : IAdminService
     {
         private readonly AdvertisementDbContext db;
+        private readonly UserManager<User> userManager;
 
-        public AdminService(AdvertisementDbContext db)
+        public AdminService(AdvertisementDbContext db, UserManager<User> userManager)
         {
             this.db = db;
+            this.userManager = userManager;
         }
 
         public IEnumerable<ListAllCategoriesServiceModel> GetCategories(int page)
@@ -127,20 +130,50 @@
         public string CategoryName(int id)
             => this.db.Categories.FirstOrDefault(c => c.Id == id).Name;
 
-        public IEnumerable<UsersListingServiceModel> GetUsers(int page)
-            => this.db
-                .Users
-                .OrderBy(c => c.Name)
-                .Skip((page - 1) * PageSize)
-                .Take(PageSize)
-                .ProjectTo<UsersListingServiceModel>()
-                .ToList();
+        public async Task<IEnumerable<UsersListingServiceModel>> GetUsers(int page, string searchTerm)
+        {
+            searchTerm = searchTerm ?? string.Empty;
 
+            var users = this.db
+                            .Users
+                            .Where(u => u.Email.ToLower().Contains(searchTerm.ToLower()))
+                            .OrderBy(c => c.Name)
+                            .Skip((page - 1) * PageSize)
+                            .Take(PageSize)
+                            .ProjectTo<UsersListingServiceModel>()
+                            .ToList();
+
+            foreach (var user in users)
+            {
+                var us = await this.userManager.FindByIdAsync(user.Id);
+                if (await this.userManager.IsInRoleAsync(us, AdministratorRole))
+                {
+                    user.IsAdmin = true;
+                }
+            }
+
+            return users;
+        }
+            
         public void DeactivateUser(string id)
         {
             var user = this.db.Users.FirstOrDefault(u => u.Id == id);
 
             user.IsDeleted = true;
+
+            var ads = this.db.Ads.Where(a => a.AuthorId == id);
+
+            foreach (var ad in ads)
+            {
+                this.db.Ads.Remove(ad);
+            }
+
+            var comments = this.db.Comments.Where(c => c.AuthorId == id);
+
+            foreach (var comment in comments)
+            {
+                this.db.Comments.Remove(comment);
+            }
 
             this.db.SaveChanges();
         }
