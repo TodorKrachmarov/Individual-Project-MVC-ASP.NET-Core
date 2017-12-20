@@ -40,10 +40,19 @@
 
             var model = new AdminUsersViewModel
             {
-                Users = await this.admin.GetUsers(page, searchTerm),
+                Users = this.admin.GetUsers(page, searchTerm),
                 CurrentPage = page,
                 TotalPages = totalPages
             };
+
+            foreach (var user in model.Users)
+            {
+                var us = await this.userManager.FindByIdAsync(user.Id);
+                if (await this.userManager.IsInRoleAsync(us, AdministratorRole))
+                {
+                    user.IsAdmin = true;
+                }
+            }
 
             return this.View(model);
         }

@@ -23,7 +23,5 @@
         public const int CategoryNameMaxLenght = 30;
 
         public const int PageSize = 15;
-
-        public const string AdministratorRole = "Administrator";
     }
 }

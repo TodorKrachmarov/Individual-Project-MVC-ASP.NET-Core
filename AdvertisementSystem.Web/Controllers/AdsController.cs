@@ -224,7 +224,7 @@
         [AllowAnonymous]
         public IActionResult Details(int id, int page = 1)
         {
-            if (this.User.Identity.IsAuthenticated)
+            if (this.User != null && this.User.Identity.IsAuthenticated)
             {
                 string userId = this.userManager.GetUserId(this.User);
                 var isDeleted = this.userService.IsDeleted(userId);

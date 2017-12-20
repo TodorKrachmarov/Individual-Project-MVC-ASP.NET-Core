@@ -3,7 +3,7 @@
     using AutoMapper;
     using AdvertisementSystem.Web.Infrastructure.Mapping;
 
-    public class Tests
+    public static class Tests
     {
         private static bool testsInitialized = false;
 

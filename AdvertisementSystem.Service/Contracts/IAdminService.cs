@@ -23,7 +23,7 @@
 
         string CategoryName(int id);
 
-        Task<IEnumerable<UsersListingServiceModel>> GetUsers(int page, string searchTerm);
+        IEnumerable<UsersListingServiceModel> GetUsers(int page, string searchTerm);
 
         void DeactivateUser(string id);
 

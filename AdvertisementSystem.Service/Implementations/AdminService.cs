@@ -5,23 +5,19 @@
     using Contracts;
     using Data;
     using Data.Models;
-    using Microsoft.AspNetCore.Identity;
     using Models.Admin.Category;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
     using static Data.DataConstants;
 
     public class AdminService : IAdminService
     {
         private readonly AdvertisementDbContext db;
-        private readonly UserManager<User> userManager;
 
-        public AdminService(AdvertisementDbContext db, UserManager<User> userManager)
+        public AdminService(AdvertisementDbContext db)
         {
             this.db = db;
-            this.userManager = userManager;
         }
 
         public IEnumerable<ListAllCategoriesServiceModel> GetCategories(int page)
@@ -130,7 +126,7 @@
         public string CategoryName(int id)
             => this.db.Categories.FirstOrDefault(c => c.Id == id).Name;
 
-        public async Task<IEnumerable<UsersListingServiceModel>> GetUsers(int page, string searchTerm)
+        public IEnumerable<UsersListingServiceModel> GetUsers(int page, string searchTerm)
         {
             searchTerm = searchTerm ?? string.Empty;
 
@@ -142,15 +138,6 @@
                             .Take(PageSize)
                             .ProjectTo<UsersListingServiceModel>()
                             .ToList();
-
-            foreach (var user in users)
-            {
-                var us = await this.userManager.FindByIdAsync(user.Id);
-                if (await this.userManager.IsInRoleAsync(us, AdministratorRole))
-                {
-                    user.IsAdmin = true;
-                }
-            }
 
             return users;
         }
